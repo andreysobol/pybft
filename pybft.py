@@ -158,8 +158,7 @@ def apply_message(replica_state, in_message, from_replica):
                     if i not in replica_state.requests["d"]["committed"]:
                         replica_state.requests["d"]["committed"] += [i]
 
-                        c1 = len(replica_state.requests["d"]["committed"]) == replica_state.size_f * 2 + 1
-                        c = c1 and (c21 or c22)
+                        c = len(replica_state.requests["d"]["committed"]) == replica_state.size_f * 2 + 1
                         if c:
                             out_messages = send_commit_message(replica_state)
                             return replica_state, out_messages
