@@ -13,7 +13,7 @@ from messages import (
     parse_commit
 )
 
-def apply_message(replica_state, in_message, from_replica):
+def main_event_loop(replica_state, in_message, from_replica, current_time):
 
     def send_commit_message(replica_state):
         create_signature = "\x00" * 64
@@ -60,8 +60,20 @@ def apply_message(replica_state, in_message, from_replica):
             }
             return replica_state, out_messages
         else:
-            # write forwarding m to leader here
-            pass
+            d = hashlib.sha256(in_message).hexdigest()
+
+            replica_state = replica_state.copy()
+            replica_state.n = n + 1
+            replica_state.requests[d] = {
+                "n": n,
+                "messages": in_message,
+                "timeout": current_time + replica_state.timeout,
+            }
+
+            # mb write forwarding m to leader here
+
+            return replica_state, {}
+
     
     if parse_title(in_message) == "pre_prepare":
         v, n, d, signature, m = parse_pre_prepare(in_message)

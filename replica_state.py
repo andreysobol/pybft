@@ -7,6 +7,7 @@ class ReplicaState():
         self.requests = requests
         self.size_replica_set = 10
         self.size_f = 3
+        self.timeout = 100
 
     def copy(self) -> 'ReplicaState':
         requests = self.requests.copy()
