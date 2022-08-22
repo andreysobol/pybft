@@ -55,6 +55,9 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
         return out_messages
 
     if parse_title(in_message) == "request":
+
+        # add optional scenario for requreations request
+
         op, t, c = parse_request(in_message)
         if replica_state.v % replica_state.size_replica_set == from_replica:
 
