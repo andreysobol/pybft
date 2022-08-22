@@ -32,7 +32,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
 
     if parse_title(in_message) == "request":
         op, t, c = parse_request(in_message)
-        if replica_state.v % replica_state.size_replica_set == replica_state.number:
+        if replica_state.v % replica_state.size_replica_set == from_replica:
 
             v = replica_state.v
             n = replica_state.n
