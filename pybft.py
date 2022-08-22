@@ -15,6 +15,30 @@ from messages import (
 
 def main_event_loop(replica_state, in_message, from_replica, current_time):
 
+    def handle_timounts(replica_state, current_time):
+        rs = replica_state.copy()
+        requests = rs.requests.items()
+        s2fp1 = lambda request: len(request["committed"]) < rs.size_f * 2 + 1
+        requests = filter(lambda request: True if not "commited" in request[1] else s2fp1(request[1]), requests)
+        requests = filter(lambda request: not "canceled" in request[1], requests)
+        requests = filter(lambda request: request[1]["timeout"] <= current_time, requests)
+        if len(requests) > 0:
+            keys = [request[0] for request in requests]
+            updated_requests = {(d, dict(rs.requests[d], canceled=True)) if d in keys else (d, rs.requests[d]) for d in rs.requests}
+
+            one_commit_requests = filter(lambda request: "commited" in request[1] for request in rs.requests.items())
+            commited_requests = filter(lambda request: len(request[1]["commited"]) >= rs.size_f * 2 + 1 for request in one_commit_requests)
+            sort_by_n = sorted(commited_requests, key=lambda request: request[1]["n"])
+            last_stable = sort_by_n[0]
+
+            # send messages to other replicas view change with last_stable
+            # TODO
+
+            rs.requests = updated_requests
+            return rs, {}
+        else:
+            return replica_state, {}
+
     def send_commit_message(replica_state):
         create_signature = "\x00" * 64
 
@@ -57,6 +81,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                 "n": n,
                 "pre_prepared": "sended",
                 "messages": in_message,
+                "timeout": current_time + replica_state.timeout,
             }
             return replica_state, out_messages
         else:
@@ -95,6 +120,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                 "n": n,
                 "pre_prepared": "recived",
                 "messages": m,
+                "timeout": current_time + replica_state.timeout,
             }
 
             create_signature = "\x00" * 64
