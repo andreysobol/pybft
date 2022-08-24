@@ -129,7 +129,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
             }
 
             create_signature = "\x00" * 64
-            prepare_message = prepare(v, n, d, replica_state.number, create_signature):
+            prepare_message = prepare(v, n, d, replica_state.number, create_signature)
 
             size = replica_state.size_replica_set
 
