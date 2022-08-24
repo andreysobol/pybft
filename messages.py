@@ -101,6 +101,23 @@ def parse_commit(message) -> tuple:
         message[72:136],
     )
 
+def chekpoint(n, d, i, signature):
+    title = serialize_title("checkpoint")
+    sn = n.to_bytes(8, byteorder='big')
+    sd = d
+    si = i.to_bytes(8, byteorder='big')
+    # 64 bytes for signature
+    ssignature = signature
+    return title + sn + sd + si + ssignature
+
+def parse_checkpoint(message) -> tuple:
+    return (
+        int.from_bytes(message[16:24], byteorder='big'),
+        message[24:56],
+        int.from_bytes(message[56:64], byteorder='big'),
+        message[64:128],
+    )
+
 # uncomment it after checkpoint implementation
 
 #def view_change(v, n, ):
