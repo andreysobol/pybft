@@ -10,7 +10,9 @@ from messages import (
     prepare,
     parse_prepare,
     commit,
-    parse_commit
+    parse_commit,
+    chekpoint,
+    parse_checkpoint
 )
 
 def main_event_loop(replica_state, in_message, from_replica, current_time):
