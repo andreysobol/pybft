@@ -100,3 +100,9 @@ def parse_commit(message) -> tuple:
         int.from_bytes(message[64:72], byteorder='big'),
         message[72:136],
     )
+
+# uncomment it after checkpoint implementation
+
+#def view_change(v, n, ):
+#    title = serialize_title("view_change")
+#    return title
