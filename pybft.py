@@ -56,9 +56,17 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
 
         return out_messages
 
-    #def checkpoint_predicate():
-    #    rs = replica_state.copy()
-    #    requests = rs.requests.items()
+    def checkpoint_predicate(n, replica_state):
+        rs = replica_state.copy()
+        requests = rs.requests.items()
+
+        checkpints = filter(lambda request: "checkpint" in request[1], requests)
+        last_checkpoint = max(checkpints, key=lambda request: request[1]["n"])
+
+        one_commit_requests = filter(lambda request: "commited" in request[1], requests)
+        commited_requests = filter(lambda request: len(request[1]["commited"]) >= rs.size_f * 2 + 1, one_commit_requests)
+        commited_after_checkpoint = filter(lambda request: request[1]["n"] > last_checkpoint[1]["n"], commited_requests)
+        return len(commited_after_checkpoint) == replica_state.checkpoint_frequency - 1
 
     def send_chekpoint_message(
         replica_state,
