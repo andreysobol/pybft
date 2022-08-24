@@ -56,6 +56,26 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
 
         return out_messages
 
+    def send_chekpoint_message(
+        replica_state,
+        n,
+        d,
+    ):
+        create_signature = "\x00" * 64
+
+        checkpoint_message = chekpoint(n, d, replica_state.number, create_signature)
+
+        size = replica_state.size_replica_set
+
+        out_messages = {
+            i:checkpoint_message
+            for i in range(0, size) 
+            if i != replica_state.number
+        }
+
+        return out_messages
+
+
     if parse_title(in_message) == "request":
 
         # add optional scenario for requreations request
