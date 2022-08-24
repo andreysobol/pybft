@@ -204,6 +204,10 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                         c = c1 and (c21 or c22)
                         if c:
                             out_messages = send_commit_message(replica_state)
+                            if checkpoint_predicate(n, replica_state):
+                                chekpoint_messages = send_chekpoint_message(replica_state, n, d)
+                                all_out_messages = out_messages.items() + chekpoint_messages.items()
+                                return replica_state, all_out_messages
                             return replica_state, out_messages.items()
 
             return replica_state, []
@@ -236,6 +240,10 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                         c = len(replica_state.requests["d"]["committed"]) == replica_state.size_f * 2 + 1
                         if c:
                             out_messages = send_commit_message(replica_state)
+                            if checkpoint_predicate(n, replica_state):
+                                chekpoint_messages = send_chekpoint_message(replica_state, n, d)
+                                all_out_messages = out_messages.items() + chekpoint_messages.items()
+                                return replica_state, all_out_messages
                             return replica_state, out_messages.items()
 
             return replica_state, []
