@@ -28,8 +28,8 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
             keys = [request[0] for request in requests]
             updated_requests = {(d, dict(rs.requests[d], canceled=True)) if d in keys else (d, rs.requests[d]) for d in rs.requests}
 
-            one_commit_requests = filter(lambda request: "commited" in request[1] for request in rs.requests.items())
-            commited_requests = filter(lambda request: len(request[1]["commited"]) >= rs.size_f * 2 + 1 for request in one_commit_requests)
+            one_commit_requests = filter(lambda request: "commited" in request[1], rs.requests.items())
+            commited_requests = filter(lambda request: len(request[1]["commited"]) >= rs.size_f * 2 + 1, one_commit_requests)
             sort_by_n = sorted(commited_requests, key=lambda request: request[1]["n"])
             last_stable = sort_by_n[0]
 
@@ -55,6 +55,10 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
         }
 
         return out_messages
+
+    #def checkpoint_predicate():
+    #    rs = replica_state.copy()
+    #    requests = rs.requests.items()
 
     def send_chekpoint_message(
         replica_state,
