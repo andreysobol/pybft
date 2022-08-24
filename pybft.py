@@ -134,7 +134,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
 
             # mb write forwarding m to leader here
 
-            return replica_state, ()
+            return replica_state, []
 
     
     if parse_title(in_message) == "pre_prepare":
@@ -204,9 +204,9 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                         c = c1 and (c21 or c22)
                         if c:
                             out_messages = send_commit_message(replica_state)
-                            return replica_state, out_messages
+                            return replica_state, out_messages.items()
 
-            return replica_state, ()
+            return replica_state, []
     
     if parse_title(in_message) == "commit":
         v, n, d, i, signature = parse_commit(in_message)
@@ -236,8 +236,8 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                         c = len(replica_state.requests["d"]["committed"]) == replica_state.size_f * 2 + 1
                         if c:
                             out_messages = send_commit_message(replica_state)
-                            return replica_state, out_messages
+                            return replica_state, out_messages.items()
 
-            return replica_state, ()
+            return replica_state, []
 
     return
