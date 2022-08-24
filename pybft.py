@@ -247,5 +247,35 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                             return replica_state, out_messages.items()
 
             return replica_state, []
+    
+    if parse_title(in_message) == "checkpoint":
+        n, d, i, signature = parse_checkpoint(in_message)
+
+        # verfy signature here
+
+        # verify digest here
+
+        c1 = (i == from_replica)
+        c = c1 and c2
+        if c:
+            replica_state = replica_state.copy()
+
+            if not d in replica_state.requests:
+                replica_state.requests[d] = {
+                    "n": n,
+                    "checkpoints": [i],
+                }
+            else:
+                if "checkpoints" not in replica_state.requests["d"]:
+                    replica_state.requests["d"]["checkpointed"] = [i]
+                else:
+                    if i not in replica_state.requests["d"]["checkpointed"]:
+                        replica_state.requests["d"]["checkpointed"] += [i]
+
+                        c = len(replica_state.requests["d"]["checkpointed"]) == replica_state.size_f + 1
+                        if c:
+                            replica_state.requests["d"]["checkpoint"] = True
+
+        return replica_state, []
 
     return
