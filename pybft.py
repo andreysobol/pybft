@@ -120,7 +120,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                 "messages": in_message,
                 "timeout": current_time + replica_state.timeout,
             }
-            return replica_state, out_messages
+            return replica_state, out_messages.items()
         else:
             d = hashlib.sha256(in_message).hexdigest()
 
@@ -134,7 +134,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
 
             # mb write forwarding m to leader here
 
-            return replica_state, {}
+            return replica_state, ()
 
     
     if parse_title(in_message) == "pre_prepare":
@@ -171,7 +171,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                 if i != replica_state.number
             }
 
-            return replica_state, out_messages
+            return replica_state, out_messages.items()
     
     if parse_title(in_message) == "prepare":
         v, n, d, i, signature = parse_prepare(in_message)
@@ -206,7 +206,7 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                             out_messages = send_commit_message(replica_state)
                             return replica_state, out_messages
 
-            return replica_state, {}
+            return replica_state, ()
     
     if parse_title(in_message) == "commit":
         v, n, d, i, signature = parse_commit(in_message)
@@ -238,6 +238,6 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
                             out_messages = send_commit_message(replica_state)
                             return replica_state, out_messages
 
-            return replica_state, {}
+            return replica_state, ()
 
     return
