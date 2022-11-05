@@ -120,6 +120,13 @@ def parse_checkpoint(message) -> tuple:
 
 # uncomment it after checkpoint implementation
 
-#def view_change(v, n, ):
-#    title = serialize_title("view_change")
-#    return title
+def view_change(v, n, c, p, i, signature):
+    title = serialize_title("view_change")
+    sv = v.to_bytes(8, byteorder='big')
+    sn = n.to_bytes(8, byteorder='big')
+    sc = [sc for citem in c]
+    sp = [sp for pitem in p]
+    si = i.to_bytes(8, byteorder='big')
+    # 64 bytes for signature
+    ssignature = signature
+    return title + sv + sn + sc + sp + si + ssignature

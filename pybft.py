@@ -187,16 +187,19 @@ def main_event_loop(replica_state, in_message, from_replica, current_time):
             replica_state = replica_state.copy()
 
             if not d in replica_state.requests:
-                replica_state.requests[m] = {
+                replica_state.requests[d] = {
                     "n": n,
                     "prepared": [i],
+                    "prepared_messages": [in_message],
                 }
             else:
                 if "prepared" not in replica_state.requests["d"]:
                     replica_state.requests["d"]["prepared"] = [i]
+                    replica_state.requests["d"]["prepared_messages"] = [in_message]
                 else:
                     if i not in replica_state.requests["d"]["prepared"]:
                         replica_state.requests["d"]["prepared"] += [i]
+                        replica_state.requests["d"]["prepared_messages"] += [in_message]
 
                         c1 = len(replica_state.requests["d"]["prepared"]) == replica_state.size_f * 2
                         c21 = replica_state.requests["d"]["pre_prepared"] == "recived"
